@@ -1,5 +1,5 @@
-# BpfOsmBot
-Belgium Phone Format OSM Bot:
+# BpfOsmTool
+Belgium Phone Format OSM Tool:
 Converts phone and fax numbers of provided OSM object ids to the ITU-T 'E.164' standard.
 
 ## How to use
@@ -13,10 +13,10 @@ Requires python 3, click and osmapi which can be installed trough:
 If the tool finds an object with one or more 'too difficult' (refer to 'phoneFormat.py') to format phone numbers it skips the entire thing.
 
 ```
-λ python BpfOsmBot.py --help
-Usage: BpfOsmBot.py [OPTIONS] [IDSF] [CREDENTIALS]
+λ python BpfOsmTool.py --help
+Usage: BpfOsmTool.py [OPTIONS] [IDSF] [CREDENTIALS]
 
-  Belgium Phone Format OSM Bot:
+  Belgium Phone Format OSM Tool:
   Converts phone and fax numbers of provided OSM object ids to the ITU-T 'E.164' standard.
 
 
@@ -38,7 +38,7 @@ Options:
   --username TEXT                 Used to login to the OSM API, edits will be
                                   displayed under this name.
   --password TEXT                 Password of said user.
-  --comment TEXT                  Changeset comment. Default is 'BPF_BOT
+  --comment TEXT                  Changeset comment. Default is 'BPF_TOOL
                                   Phone/Fax number correction'
   --verbose                       If set, logs debug messages to the console.
   --unattended                    If set, defaults are used in place of user
