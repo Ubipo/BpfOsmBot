@@ -8,7 +8,7 @@ Requires python 3, click and osmapi which can be installed trough:
 λ pip install -r requirements.txt
 ```
 
-###Main tool (for editing OSM objects):
+### Main tool (for editing OSM objects):
 
 If the tool finds an object with one or more 'too difficult' (refer to 'phoneFormat.py') to format phone numbers it skips the entire thing.
 
@@ -50,7 +50,7 @@ Options:
   --help                          Show this message and exit.
 ```
 
-###Tester tool (for testing the phone format script):
+### Tester tool (for testing the phone format script):
 ```
 λ python formatTester.py "<Belgian phone/fax number to format>"
 ```
