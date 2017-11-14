@@ -8,7 +8,10 @@ Requires python 3, click and osmapi which can be installed trough:
 λ pip install -r requirements.txt
 ```
 
-Main tool (for editing OSM objects):
+###Main tool (for editing OSM objects):
+
+If the tool finds an object with one or more 'too difficult' (refer to 'phoneFormat.py') to format phone numbers it skips the entire thing.
+
 ```
 λ python BpfOsmBot.py --help
 Usage: BpfOsmBot.py [OPTIONS] [IDSF] [CREDENTIALS]
@@ -17,7 +20,7 @@ Usage: BpfOsmBot.py [OPTIONS] [IDSF] [CREDENTIALS]
   Converts phone and fax numbers of provided OSM object ids to the ITU-T 'E.164' standard.
 
 
-  IDS:                File containing ID's of objects to process. If not set,
+  IDSF:               File containing ID's of objects to process. If not set,
                       ID's will be prompted for.
 
   CREDENTIALS:        File containing OSM username and password, one per line
@@ -47,7 +50,7 @@ Options:
   --help                          Show this message and exit.
 ```
 
-Tester tool (for testing the phone format script):
+###Tester tool (for testing the phone format script):
 ```
 λ python formatTester.py "<Belgian phone/fax number to format>"
 ```

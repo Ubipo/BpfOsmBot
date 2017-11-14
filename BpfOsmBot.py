@@ -18,8 +18,8 @@ Commented lines marked with '$' are for r/w behaviour
 # =======================
 
 # Tag names the bot is trying to fix
-defaultTag = ['phone', 'contact:phone', 'fax', 'contact:fax']
-defaultUrl = 'https://api.master.apis.dev.openstreetmap.org'
+defaultTagsNames = ['phone', 'contact:phone', 'fax', 'contact:fax']
+defaultUrl = 'https://api06.dev.openstreetmap.org'
 defaultComment = 'BPF_BOT Phone/Fax number correction'
 logFile = 'BpfOsmBot.log'
 
@@ -28,15 +28,7 @@ logFile = 'BpfOsmBot.log'
 # > Declarations ========
 # =======================
 
-formatError = False
-answersYes = ['y', 'yes']
-fileQ = False
-rwQ = False
-idQ = False
-idFile = ''
-ids = []
 log = None
-credsList = []
 
 # Logger
 def startLogger(clLevel):
@@ -62,6 +54,7 @@ def startLogger(clLevel):
   log.addHandler(ch)
   log.addHandler(fh)
 
+# Actual tag editor
 def fixObject(osmObject, tagNames):
   # Create return dictionary
   returnDic = {'tagsChanged': False, 'formatError': False, 'object': ''}
@@ -70,6 +63,7 @@ def fixObject(osmObject, tagNames):
   tags = osmObject['tag']
   for tagName in tagNames:
     if tags.get(tagName, False):
+      # Format the tag
       formatted = phoneFormat.belgium(tags[tagName])
       if formatted != 'error':
         log.info('Updated '  + tagName + ' from ' + tags[tagName] + ' to ' + formatted)
@@ -84,18 +78,20 @@ def fixObject(osmObject, tagNames):
   # Replace osmObject's tags with new ones
   osmObject['tag'] = tags
 
-  # Return the return dictionary
+  # Return
   returnDic['object'] = osmObject
   return returnDic
 
+# Removes personal tags from the object added by previous editor
 def cleanObject(osmObject):
-  del osmObject['changeset']
-  del osmObject['timestamp']
-  del osmObject['user']
-  del osmObject['uid']
+  del osmObject['changeset'] # automatically added
+  del osmObject['timestamp'] # Idem
+  del osmObject['user'] # Idem
+  del osmObject['uid'] # Idem
 
   return osmObject
 
+# Uses OSM API to retrieve an object
 def getObject(api, osmType, osmId):
   if osmType == 'node':
     return api.NodeGet(osmId)
@@ -107,6 +103,7 @@ def getObject(api, osmType, osmId):
     log.exception('Internal type error.')
     raise SystemExit(0)
 
+# Uses OSM API to update an object
 def updateObject(api, osmType, osmObject):
   if osmType == 'node':
     api.NodeUpdate(osmObject)
@@ -130,9 +127,9 @@ def updateObject(api, osmType, osmObject):
 @click.argument('idsf', required=False, type=click.File('r'))
 @click.argument('credentials', required=False, type=click.File('r'))
 
-# Required options
+# Options
 @click.option('--osm-type', type=click.Choice(['node', 'way', 'relation']), default='node', prompt='> Which OSM object type to edit?', help='Which object type to scan.')
-@click.option('--tag', multiple=True, help='Which tags to correct. Overrides default of: '+' '.join(defaultTag), default=defaultTag)
+@click.option('--tag', multiple=True, help='Which tags to correct. Overrides default of: '+' '.join(defaultTagsNames), default=defaultTagsNames)
 @click.option('--upload', is_flag=True, prompt='> Upload data to OSM database? If no a simulation is run', help='If set, the script uploads data to the OSM server.')
 @click.option('--url', help='OSM API server URL. Default is \''+defaultUrl+'\'')
 @click.option('--username', help='Used to login to the OSM API, edits will be displayed under this name.')
@@ -151,7 +148,7 @@ def main(idsf, credentials, osm_type, tag, upload, url, username, password, comm
 
   \b
   \b
-  IDS:                File containing ID\'s of objects to process. If not set,
+  IDSF:               File containing ID\'s of objects to process. If not set,
                       ID's will be prompted for.
   \b
   CREDENTIALS:        File containing OSM username and password, one per line
@@ -169,13 +166,18 @@ def main(idsf, credentials, osm_type, tag, upload, url, username, password, comm
   else:
     startLogger(log_level)
 
+  # Additional questions for unfilled values
   if upload:
     log.warning('Upload is ON')
+    # Check if URL is provided
     if not url:
       url = click.prompt('> Enter OSM API server URL', default=defaultUrl)
+    # Check if username and password is provided
     if not (username and password):
+      # Check if a credentials file is provided
       if credentials:
         # Extract credentials
+        credsList = []
         for line in credentials: 
           credsList.append(line.strip().split(':'))
         if len(credsList) > 1 and not unattended:
@@ -217,8 +219,11 @@ def main(idsf, credentials, osm_type, tag, upload, url, username, password, comm
     api = osmapi.OsmApi(api = url, username = username, password = password, changesetauto=True, changesetautotags={"comment": comment, "bot": "yes"}, changesetautosize=200, changesetautomulti=1)
 
   else:
+    # If we're not uploading changes, don't provide the OSM API with a username/password
     api = osmapi.OsmApi()
 
+  # Get the IDS of objects to edit
+  ids = []
   if idsf:
     for line in idsf: 
       ids.append(line.strip())
