@@ -1,0 +1,12 @@
+# Secrets and passwords
+credentials.txt
+/config/auth.js
+
+# Logs
+*.log
+
+# Configuration files
+ids.txt
+
+# Compiled
+__pycache__/
