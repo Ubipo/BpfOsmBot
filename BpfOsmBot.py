@@ -8,7 +8,7 @@ import click
 === BpfOsmBot.py ===
 
 Belgium Phone Format OSM Bot:
-Converts phone and fax numbers of provided ids to the ITU-T 'E.164' standard
+Converts phone and fax numbers of provided OSM object ids to the ITU-T 'E.164' standard.
 
 Commented lines marked with '$' are for r/w behaviour 
 '''
@@ -147,7 +147,7 @@ def main(idsf, credentials, osm_type, tag, upload, url, username, password, comm
   """
   \b
   Belgium Phone Format OSM Bot:
-  Converts phone and fax numbers of provided ids to the ITU-T 'E.164' standard.
+  Converts phone and fax numbers of provided OSM object ids to the ITU-T 'E.164' standard.
 
   \b
   \b
@@ -257,8 +257,4 @@ def main(idsf, credentials, osm_type, tag, upload, url, username, password, comm
 
 if __name__ == '__main__':
     main()
-
-
-
-
 
