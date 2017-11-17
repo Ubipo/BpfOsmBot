@@ -16,7 +16,7 @@ If the tool finds an object with one or more 'too difficult' (refer to 'phoneFor
 λ python BpfOsmTool.py --help
 Usage: BpfOsmTool.py [OPTIONS] [IDSF] [CREDENTIALS]
 
-  Belgium Phone Format OSM Tool:
+  Belgium Phone Format OSM Tool by Ubipo:
   Converts phone and fax numbers of provided OSM object ids to the ITU-T 'E.164' standard.
 
 

@@ -7,7 +7,7 @@ import click
 '''
 === BpfOsmTool.py ===
 
-Belgium Phone Format OSM Tool:
+Belgium Phone Format OSM Tool by Ubipo:
 Converts phone and fax numbers of provided OSM object ids to the ITU-T 'E.164' standard.
 
 Commented lines marked with '$' are for r/w behaviour 
@@ -17,6 +17,7 @@ Commented lines marked with '$' are for r/w behaviour
 # > Variables ===========
 # =======================
 
+# Tag names the bot is trying to fix
 defaultTagsNames = ['phone', 'contact:phone', 'fax', 'contact:fax'] # Tag names the Tool is trying to fix
 defaultUrl = 'https://api06.dev.openstreetmap.org'
 defaultComment = 'BPF_TOOL Phone/Fax number correction' # Displayed on the changeset
@@ -242,15 +243,17 @@ def main(idsf, credentials, osm_type, tag, upload, url, username, password, comm
     objectOld = cleanObject(getObject(api, osm_type, objectId))
     fixData = fixObject(objectOld, tag)
     objectNew = fixData['object']
+    formatError = fixData['formatError']
+    tagsChanged = fixData['tagsChanged']
     log.debug('Raw objects: \n Old: ' + str(objectOld) + '\n New: ' + str(objectNew) + '\'')
-    if not fixData['formatError'] and fixData['tagsChanged']:
+    if not formatError and tagsChanged:
       if upload:
         updateObject(api, osm_type, objectNew)
       else:
         log.info(objectNew)
-    elif not fixData['formatError'] and not fixData['tagsChanged']:
+    elif not formatError and not tagsChanged:
       log.info('Didn\'t update, nothing to change.')
-    elif fixData['formatError']:
+    elif formatError:
       log.error('Didn\'t update, difficult or no number detected.')
     else:
       log.error('Unknown error.')

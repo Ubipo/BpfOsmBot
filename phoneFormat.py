@@ -1,7 +1,7 @@
 '''
 === phoneFormat.py ===
 
-Belgian Phone number Formatter
+Belgian Phone number Formatter by Ubipo
 Formats belgian phone numbers from given id('s) to the ITU-T 'E.164' standard
 argument: phone #
 returns: string, either:
@@ -34,6 +34,10 @@ def belgium(raw):
   # First 2 digits of 
   mobCodes = ['46', '47', '48', '49']
 
+  # Dangerous codes (sometimes overlap with safeCodes)
+  dangTwo = ['70', '77', '78', '90']
+  dangThree = ['800']
+
   #-------------------
 
   # Get only numbers and remove preceding zero's
@@ -44,7 +48,7 @@ def belgium(raw):
         clean+=str(c)
         precZero = False
 
-  # Check if there's a Belgian int country code in fornt. If so, remove
+  # Check if there's a Belgian int country code in front. If so, remove
   if len(clean) >= 9 and clean[:2] == '32':
     clean = clean[2:]
 
@@ -68,13 +72,16 @@ def belgium(raw):
   sliced.append(norm[-4:-2])
   sliced.append(norm[-2:])
 
+  # Check for 'dangerous' area code
+  if not(sliced[0] in safeCodes or sliced[0] in shortCodes or sliced[0][:-1] in mobCodes):
+    error = True  
+
   # Check if the number has a known safe area code
-  if sliced[0] in safeCodes or sliced[0] in shortCodes or sliced[0][:-1] in mobCodes:
-    formatted = '+32 ' + sliced[0] + ' ' + sliced[1] + ' ' + sliced[2] + ' ' + sliced[3]
-  else:
+  if norm[:2] in dangTwo or norm[:3] in dangThree:
     error = True
 
   if error:
     return('error')
   else:
+    formatted = '+32 ' + sliced[0] + ' ' + sliced[1] + ' ' + sliced[2] + ' ' + sliced[3]
     return(formatted)
