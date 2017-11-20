@@ -10,3 +10,6 @@ ids.txt
 
 # Compiled
 __pycache__/
+
+# Testing
+.cache

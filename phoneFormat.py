@@ -27,7 +27,7 @@ def belgium(raw):
   '78' - National rate services
   '90' - Premium numbers 
   '''
-  safeCodes = ['10', '11', '12', '13', '14', '15', '16', '19', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '60', '61', '63', '64', '65', '67', '68', '69', '71', '80', '81', '82', '83', '84', '85', '86', '87', '89']
+  longCodes = ['10', '11', '12', '13', '14', '15', '16', '19', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '60', '61', '63', '64', '65', '67', '68', '69', '71', '80', '81', '82', '83', '84', '85', '86', '87', '89']
 
   shortCodes = ['2', '3', '4', '9']
 
@@ -59,26 +59,23 @@ def belgium(raw):
       norm+=str(c)
       precZero = False
 
-  # Check if area code is a short code <x xxx xx xx> (or is a Liège number) or long code <(xxx/xx) xx xx xx> and
-  # extract area code and first part of subscriber number
-  if norm[:1] in shortCodes and len(norm) == 8:
-    sliced.append(norm[:-7])
-    sliced.append(norm[-7:-4])
+  # Parse area code
+  if not (norm[:2] in dangTwo or norm[:3] in dangThree):
+    # extract area code and first part of subscriber number
+    if (norm[:2] in longCodes and len(norm) == 8) or (norm[:2] in mobCodes and len(norm) == 9):
+      sliced.append(norm[:-6])
+      sliced.append(norm[-6:-4])
+    elif (norm[:1] in shortCodes and len(norm) == 8) and not norm[:2] in mobCodes:
+      sliced.append(norm[:-7])
+      sliced.append(norm[-7:-4])
+    else:
+      error = True
   else:
-    sliced.append(norm[:-6])
-    sliced.append(norm[-6:-4])
+    error = True
 
   # Extract the last two parts of the subscriber number
   sliced.append(norm[-4:-2])
   sliced.append(norm[-2:])
-
-  # Check for 'dangerous' area code
-  if not(sliced[0] in safeCodes or sliced[0] in shortCodes or sliced[0][:-1] in mobCodes):
-    error = True  
-
-  # Check if the number has a known safe area code
-  if norm[:2] in dangTwo or norm[:3] in dangThree:
-    error = True
 
   if error:
     return('error')
